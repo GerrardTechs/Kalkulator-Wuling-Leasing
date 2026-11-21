@@ -7,9 +7,6 @@ import {
   AlertCircle,
   Calculator,
   Tag,
-  ShieldCheck,
-  TrendingDown,
-  Info,
   Building2,
   Calendar,
   Gift,
@@ -47,7 +44,6 @@ export default function App() {
     [selectedId]
   );
 
-  // Reset promo & simulasi saat berganti unit atau NIK
   useEffect(() => {
     if (!vehicle.canRoyalis) setRoyalis(false);
     if (!vehicle.canTradeIn) setTradeIn(false);
@@ -67,7 +63,6 @@ export default function App() {
     if (next) setRoyalis(false);
   };
 
-  // Fungsi yang tadi hilang untuk menangani input DP manual
   const handleDpChange = (val) => {
     setDpInput(val);
     setIsCustomSim(val !== '' && Number(val) > 0);
@@ -77,12 +72,10 @@ export default function App() {
   const calculation = useMemo(() => {
     let dealerDisc = vehicle.disc[nik] || 0;
 
-    // Pengecualian Diskon Confero NIK 25 di luar CIMB
     if (vehicle.id === 'confero_db' && nik === '2025' && leasing !== 'CIMB') {
       dealerDisc = 57000000;
     }
 
-    // Pengecualian Darion EV EX Cash (All Risk)
     if (vehicle.cashNoDiscAllRisk && payment === 'cash') {
       dealerDisc = 0;
     }
@@ -124,7 +117,7 @@ export default function App() {
       baseList = tenors.map((t) => {
         const years = Math.ceil(t / 12);
         const flatRate = rateConfig[t] || 0.07;
-        const principal = vehicle.otr * 0.80; 
+        const principal = vehicle.otr * 0.80;
         const totalLoan = principal * (1 + flatRate * years);
         const angsuran = Math.round(totalLoan / t / 1000) * 1000;
         const tdp = Math.round((vehicle.otr * 0.20 + 6500000) / 10000) * 10000;
@@ -138,13 +131,11 @@ export default function App() {
       const years = Math.ceil(row.tenor / 12);
       const flatRate = rateConfig[row.tenor] || 0.07;
       const brochureTdpKotor = row.tdp;
-      
-      // Hitung DP Nett Brosur Asli
+
       const brochureDpNett = row.isNettPromo
         ? row.tdp
         : Math.max(0, brochureTdpKotor - calculation.totalPotongan);
 
-      // Jika user belum mengisi simulasi, tampilkan default brosur
       if (!isCustomSim || rawInput <= 0) {
         return {
           ...row,
@@ -158,7 +149,6 @@ export default function App() {
         };
       }
 
-      // Mode Hitung Dinamis berdasarkan input User
       let targetTdpKotor = 0;
       let targetDpNett = 0;
 
@@ -174,7 +164,6 @@ export default function App() {
           : Math.max(0, rawInput - calculation.totalPotongan);
       }
 
-      // Hitung selisih angsuran akibat perubahan DP
       const deltaDp = targetTdpKotor - brochureTdpKotor;
       const deltaAngsuran = Math.round((deltaDp * (1 + flatRate * years)) / row.tenor / 1000) * 1000;
       const newAngsuran = Math.max(500000, row.angsuran - deltaAngsuran);
@@ -225,25 +214,26 @@ _Info & Pemesanan Test Drive:_
   const isAvailable = currentStock.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto space-y-6">
         
-        <header className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* HEADER */}
+        <header className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="p-3.5 bg-blue-600/20 border border-blue-500/40 rounded-xl text-blue-400">
+            <div className="p-3.5 bg-[#2f6bff]/10 border border-[#2f6bff]/20 rounded-xl text-[#2f6bff]">
               <Calculator size={32} />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
                 Wuling Leasing Calculator Pro
               </h1>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 Kalkulasi Otomatis DP Konsumen, Angsuran & Sales Program — Wuling Arista Lampung
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-700 px-4 py-2 rounded-xl text-xs font-medium text-slate-300">
-            <Car size={16} className="text-blue-400" />
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold text-slate-600">
+            <Car size={16} className="text-[#2f6bff]" />
             <span>Update Oktober–November 2026</span>
           </div>
         </header>
@@ -252,20 +242,20 @@ _Info & Pemesanan Test Drive:_
           
           {/* KOLOM KIRI */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
-              <h2 className="text-lg font-semibold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-                <Car size={20} className="text-blue-400" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+              <h2 className="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                <Car size={20} className="text-[#2f6bff]" />
                 1. Pilih Unit & NIK
               </h2>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                   Model Kendaraan
                 </label>
                 <select
                   value={selectedId}
                   onChange={(e) => setSelectedId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-medium focus:outline-none focus:border-blue-500 transition"
+                  className="w-full bg-white border border-slate-300 rounded-xl p-3 text-slate-900 font-medium focus:outline-none focus:border-[#2f6bff] focus:ring-2 focus:ring-[#2f6bff]/20 transition"
                 >
                   <optgroup label="Kendaraan Listrik (EV & PHEV)">
                     {VEHICLES.filter((v) => v.type !== 'ICE').map((v) => (
@@ -286,13 +276,13 @@ _Info & Pemesanan Test Drive:_
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                     Tahun NIK
                   </label>
                   <select
                     value={nik}
                     onChange={(e) => setNik(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-medium focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-3 text-slate-900 font-medium focus:outline-none focus:border-[#2f6bff] focus:ring-2 focus:ring-[#2f6bff]/20"
                   >
                     <option value="2026">NIK 2026</option>
                     <option value="2025">NIK 2025</option>
@@ -300,13 +290,13 @@ _Info & Pemesanan Test Drive:_
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                     Metode Pembelian
                   </label>
                   <select
                     value={payment}
                     onChange={(e) => setPayment(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white font-medium focus:outline-none focus:border-blue-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-3 text-slate-900 font-medium focus:outline-none focus:border-[#2f6bff] focus:ring-2 focus:ring-[#2f6bff]/20"
                   >
                     <option value="kredit">Kredit (Leasing)</option>
                     <option value="cash">Cash (Tunai)</option>
@@ -314,18 +304,19 @@ _Info & Pemesanan Test Drive:_
                 </div>
               </div>
 
+              {/* Status Stok */}
               <div
                 className={`p-4 rounded-xl border ${
                   isAvailable
-                    ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-200'
-                    : 'bg-rose-950/40 border-rose-700/60 text-rose-200'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                    : 'bg-rose-50 border-rose-200 text-rose-800'
                 }`}
               >
                 <div className="flex items-center gap-2 font-semibold text-sm">
                   {isAvailable ? (
-                    <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
+                    <CheckCircle2 size={18} className="text-emerald-600 shrink-0" />
                   ) : (
-                    <AlertCircle size={18} className="text-rose-400 shrink-0" />
+                    <AlertCircle size={18} className="text-rose-600 shrink-0" />
                   )}
                   <span>
                     {isAvailable
@@ -334,7 +325,7 @@ _Info & Pemesanan Test Drive:_
                   </span>
                 </div>
                 {isAvailable && (
-                  <ul className="mt-2 space-y-1 text-xs text-emerald-300/90 pl-6 list-disc">
+                  <ul className="mt-2 space-y-1 text-xs text-emerald-700 pl-6 list-disc">
                     {currentStock.map((s, idx) => (
                       <li key={idx}>
                         <strong>{s.color}</strong> — Posisi: {s.loc} ({s.note})
@@ -346,7 +337,7 @@ _Info & Pemesanan Test Drive:_
 
               {payment === 'kredit' && (
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
                     Pilih Perusahaan Leasing
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -357,8 +348,8 @@ _Info & Pemesanan Test Drive:_
                         onClick={() => setLeasing(ls)}
                         className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition ${
                           leasing === ls
-                            ? 'bg-blue-600 border-blue-400 text-white shadow-lg shadow-blue-600/30'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                            ? 'bg-[#2f6bff] border-[#2f6bff] text-white shadow-md shadow-[#2f6bff]/25'
+                            : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
                         }`}
                       >
                         {ls === 'SGMW' ? 'SGMW (WuFi)' : ls}
@@ -368,19 +359,19 @@ _Info & Pemesanan Test Drive:_
                 </div>
               )}
 
-              <div className="pt-2 border-t border-slate-800 space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Tag size={14} className="text-blue-400" />
+              <div className="pt-2 border-t border-slate-100 space-y-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <Tag size={14} className="text-[#2f6bff]" />
                   2. Promo Tambahan
                 </h3>
 
                 <label
                   className={`flex items-start gap-3 p-3 rounded-xl border transition ${
                     !vehicle.canRoyalis
-                      ? 'opacity-40 cursor-not-allowed bg-slate-950 border-slate-800'
+                      ? 'opacity-50 cursor-not-allowed bg-slate-50 border-slate-200'
                       : royalis
-                      ? 'bg-blue-950/40 border-blue-500/60 cursor-pointer'
-                      : 'bg-slate-950 border-slate-800 cursor-pointer hover:border-slate-700'
+                      ? 'bg-blue-50 border-[#2f6bff] cursor-pointer'
+                      : 'bg-white border-slate-200 cursor-pointer hover:border-slate-300'
                   }`}
                 >
                   <input
@@ -388,10 +379,10 @@ _Info & Pemesanan Test Drive:_
                     disabled={!vehicle.canRoyalis}
                     checked={royalis}
                     onChange={handleToggleRoyalis}
-                    className="mt-1 h-4 w-4 accent-blue-500"
+                    className="mt-0.5 h-4 w-4 accent-[#2f6bff]"
                   />
                   <div className="text-xs">
-                    <p className="font-semibold text-slate-200">
+                    <p className="font-semibold text-slate-800">
                       Program Royalis (+ Diskon Rp 8 Juta)
                     </p>
                   </div>
@@ -400,10 +391,10 @@ _Info & Pemesanan Test Drive:_
                 <label
                   className={`flex items-start gap-3 p-3 rounded-xl border transition ${
                     !vehicle.canTradeIn
-                      ? 'opacity-40 cursor-not-allowed bg-slate-950 border-slate-800'
+                      ? 'opacity-50 cursor-not-allowed bg-slate-50 border-slate-200'
                       : tradeIn
-                      ? 'bg-blue-950/40 border-blue-500/60 cursor-pointer'
-                      : 'bg-slate-950 border-slate-800 cursor-pointer hover:border-slate-700'
+                      ? 'bg-blue-50 border-[#2f6bff] cursor-pointer'
+                      : 'bg-white border-slate-200 cursor-pointer hover:border-slate-300'
                   }`}
                 >
                   <input
@@ -411,21 +402,21 @@ _Info & Pemesanan Test Drive:_
                     disabled={!vehicle.canTradeIn}
                     checked={tradeIn}
                     onChange={handleToggleTradeIn}
-                    className="mt-1 h-4 w-4 accent-blue-500"
+                    className="mt-0.5 h-4 w-4 accent-[#2f6bff]"
                   />
                   <div className="text-xs">
-                    <p className="font-semibold text-slate-200">
+                    <p className="font-semibold text-slate-800">
                       Subsidi Trade-In (+ Diskon Rp 8 Juta)
                     </p>
                   </div>
                 </label>
               </div>
 
-              {/* AREA INPUT YANG TADI ERROR */}
+              {/* INPUT SIMULASI DP */}
               {payment === 'kredit' && (
-                <div className="pt-3 border-t border-slate-800 space-y-3">
+                <div className="pt-3 border-t border-slate-100 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                       <Calculator size={14} />
                       3. Kalkulator DP Konsumen
                     </label>
@@ -436,7 +427,7 @@ _Info & Pemesanan Test Drive:_
                           setDpInput('');
                           setIsCustomSim(false);
                         }}
-                        className="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 px-2.5 py-1 rounded-lg transition"
+                        className="text-xs text-slate-600 hover:text-slate-900 flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg transition"
                       >
                         <RotateCcw size={12} />
                         Reset
@@ -444,14 +435,14 @@ _Info & Pemesanan Test Drive:_
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                  <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200">
                     <button
                       type="button"
                       onClick={() => setDpMode('NETT')}
                       className={`py-2 px-2 rounded-lg text-xs font-bold transition ${
                         dpMode === 'NETT'
-                          ? 'bg-emerald-600 text-white shadow'
-                          : 'text-slate-400 hover:text-slate-200'
+                          ? 'bg-emerald-600 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Budget DP Nett
@@ -461,8 +452,8 @@ _Info & Pemesanan Test Drive:_
                       onClick={() => setDpMode('GROSS')}
                       className={`py-2 px-2 rounded-lg text-xs font-bold transition ${
                         dpMode === 'GROSS'
-                          ? 'bg-blue-600 text-white shadow'
-                          : 'text-slate-400 hover:text-slate-200'
+                          ? 'bg-[#2f6bff] text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       TDP Kotor Brosur
@@ -482,7 +473,7 @@ _Info & Pemesanan Test Drive:_
                           ? 'Ketik uang DP bersih...'
                           : 'Ketik TDP kotor brosur...'
                       }
-                      className="w-full bg-slate-950 border-2 border-emerald-500/50 rounded-xl py-3 pl-10 pr-4 text-lg font-bold text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-white border-2 border-emerald-500/60 rounded-xl py-3 pl-10 pr-4 text-lg font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
                     />
                   </div>
                 </div>
@@ -493,48 +484,48 @@ _Info & Pemesanan Test Drive:_
           {/* KOLOM KANAN */}
           <div className="lg:col-span-7 space-y-6">
             
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4">
                 <div>
-                  <span className="text-xs uppercase tracking-wider text-blue-400 font-bold">
+                  <span className="text-xs uppercase tracking-wider text-[#2f6bff] font-bold">
                     Spesifikasi & Subsidi
                   </span>
-                  <h2 className="text-2xl font-bold text-white mt-0.5">{vehicle.name}</h2>
+                  <h2 className="text-2xl font-bold text-slate-900 mt-0.5">{vehicle.name}</h2>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div className="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl">
-                  <p className="text-slate-400 text-xs">Harga OTR Lampung</p>
-                  <p className="text-xl font-bold text-white mt-1">{formatRp(vehicle.otr)}</p>
+                <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl">
+                  <p className="text-slate-500 text-xs font-medium">Harga OTR Lampung</p>
+                  <p className="text-xl font-bold text-slate-900 mt-1">{formatRp(vehicle.otr)}</p>
                 </div>
-                <div className="bg-slate-950/80 border border-slate-800/80 p-4 rounded-xl">
-                  <p className="text-slate-400 text-xs">Total Potongan</p>
-                  <p className="text-xl font-bold text-emerald-400 mt-1">
+                <div className="bg-emerald-50/70 border border-emerald-200/80 p-4 rounded-xl">
+                  <p className="text-emerald-700 text-xs font-medium">Total Potongan</p>
+                  <p className="text-xl font-bold text-emerald-700 mt-1">
                     - {formatRp(calculation.totalPotongan)}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 text-sm space-y-2">
+              <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 text-sm space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Diskon (NIK {nik})</span>
-                  <span className="font-semibold text-rose-400">
+                  <span className="text-slate-600">Diskon (NIK {nik})</span>
+                  <span className="font-semibold text-rose-600">
                     - {formatRp(calculation.dealerDisc)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">
+                  <span className="text-slate-600">
                     Subvention ({payment === 'cash' ? '-' : leasing})
                   </span>
-                  <span className="font-semibold text-rose-400">
+                  <span className="font-semibold text-rose-600">
                     - {formatRp(calculation.subvention)}
                   </span>
                 </div>
                 {calculation.extraPromo > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Promo Khusus</span>
-                    <span className="font-semibold text-rose-400">
+                    <span className="text-slate-600">Promo Khusus</span>
+                    <span className="font-semibold text-rose-600">
                       - {formatRp(calculation.extraPromo)}
                     </span>
                   </div>
@@ -543,14 +534,14 @@ _Info & Pemesanan Test Drive:_
             </div>
 
             {payment === 'kredit' && (
-              <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Building2 size={20} className="text-blue-400" />
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                    <Building2 size={20} className="text-[#2f6bff]" />
                     Simulasi Angsuran {leasing}
                   </h3>
                   {isCustomSim && (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 animate-pulse">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 border border-emerald-200 text-emerald-700">
                       Mode Kalkulasi Real-Time
                     </span>
                   )}
@@ -559,43 +550,43 @@ _Info & Pemesanan Test Drive:_
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-sm">
                     <thead>
-                      <tr className="border-b border-slate-800 text-slate-400 text-xs uppercase">
-                        <th className="py-3 px-3">Tenor</th>
+                      <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 text-xs uppercase">
+                        <th className="py-3 px-3 rounded-tl-lg">Tenor</th>
                         <th className="py-3 px-3">TDP Kotor</th>
-                        <th className="py-3 px-3 text-emerald-400">Setor DP (Nett)</th>
+                        <th className="py-3 px-3 text-emerald-700">Setor DP (Nett)</th>
                         <th className="py-3 px-3 text-right">Angsuran / Bln</th>
-                        <th className="py-3 px-2 text-center">WA</th>
+                        <th className="py-3 px-2 text-center rounded-tr-lg">WA</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/70">
+                    <tbody className="divide-y divide-slate-100">
                       {simulatedRows.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-slate-800/50 transition">
-                          <td className="py-3.5 px-3 font-medium text-white">
+                        <tr key={idx} className="hover:bg-blue-50/40 transition">
+                          <td className="py-3.5 px-3 font-medium text-slate-900">
                             <div className="flex items-center gap-1.5">
-                              <Calendar size={14} className="text-blue-400 shrink-0" />
+                              <Calendar size={14} className="text-[#2f6bff] shrink-0" />
                               <span>{row.tenor} Bln ({row.years} Thn)</span>
                             </div>
                             {row.label && (
-                              <span className="inline-block mt-1 text-[11px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">
+                              <span className="inline-block mt-1 text-[11px] bg-blue-50 text-[#2f6bff] border border-blue-100 px-2 py-0.5 rounded font-medium">
                                 {row.label}
                               </span>
                             )}
                           </td>
                           
-                          <td className="py-3.5 px-3 text-slate-300">
+                          <td className="py-3.5 px-3 text-slate-600">
                             {formatRp(row.simTdpKotor)}
                           </td>
                           
-                          <td className="py-3.5 px-3 font-bold text-emerald-400 text-base">
+                          <td className="py-3.5 px-3 font-bold text-emerald-600 text-base">
                             {formatRp(row.simDpNett)}
                           </td>
                           
                           <td className="py-3.5 px-3 text-right">
-                            <div className="font-extrabold text-white text-base">
+                            <div className="font-extrabold text-slate-900 text-base">
                               {formatRp(row.simAngsuran)}
                             </div>
                             {isCustomSim && row.diffAngsuran !== 0 && (
-                              <span className={`text-[11px] font-medium ${row.diffAngsuran < 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                              <span className={`text-[11px] font-semibold ${row.diffAngsuran < 0 ? 'text-emerald-600' : 'text-amber-600'}`}>
                                 {row.diffAngsuran < 0 ? `Hemat ${formatRp(Math.abs(row.diffAngsuran))}/bln` : `+${formatRp(row.diffAngsuran)}/bln`}
                               </span>
                             )}
@@ -604,7 +595,7 @@ _Info & Pemesanan Test Drive:_
                           <td className="py-3.5 px-2 text-center">
                             <button
                               onClick={() => handleCopyWA(row, idx)}
-                              className="p-2 rounded-lg bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition"
+                              className="p-2 rounded-lg bg-slate-100 hover:bg-emerald-600 text-slate-600 hover:text-white transition"
                             >
                               {copiedIndex === idx ? <Check size={15} /> : <Copy size={15} />}
                             </button>
@@ -617,14 +608,14 @@ _Info & Pemesanan Test Drive:_
               </div>
             )}
 
-            <div className="bg-gradient-to-br from-slate-900 to-blue-950/60 border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Gift size={20} className="text-amber-400" /> Benefit Konsumen
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <Gift size={20} className="text-amber-500" /> Benefit Konsumen
               </h3>
               <div className="grid grid-cols-1 gap-2.5">
                 {(vehicle.salesProgram || []).map((b, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl text-sm text-slate-200">
-                    <CheckCircle2 size={18} className="text-emerald-400 shrink-0 mt-0.5" />
+                  <div key={i} className="flex items-start gap-3 bg-slate-50 border border-slate-200/70 p-3.5 rounded-xl text-sm text-slate-700">
+                    <CheckCircle2 size={18} className="text-emerald-600 shrink-0 mt-0.5" />
                     <span>{b}</span>
                   </div>
                 ))}
