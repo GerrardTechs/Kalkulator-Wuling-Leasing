@@ -140,6 +140,7 @@ export default function App() {
         return {
           ...row,
           years,
+          flatRate,
           simTdpKotor: brochureTdpKotor,
           simDpNett: brochureDpNett,
           simAngsuran: row.angsuran,
@@ -566,6 +567,9 @@ _Info & Pemesanan Test Drive:_
                               <Calendar size={14} className="text-[#2f6bff] shrink-0" />
                               <span>{row.tenor} Bln ({row.years} Thn)</span>
                             </div>
+                            <span className="inline-block mt-1 text-[11px] text-slate-500 font-medium">
+                                Est. Bunga: {(row.flatRate * 100).toFixed(2)}% / thn
+                            </span>
                             {row.label && (
                               <span className="inline-block mt-1 text-[11px] bg-blue-50 text-[#2f6bff] border border-blue-100 px-2 py-0.5 rounded font-medium">
                                 {row.label}
